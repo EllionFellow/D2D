@@ -50,7 +50,7 @@ namespace D2D
             while (true)
             {
                 i++;
-                if (i>100)
+                if (i>1000)
                 {
                     i = 0;
                 }
@@ -62,19 +62,14 @@ namespace D2D
         {
             //Paint!
             d2dWindowRenderTarget.BeginDraw();
-            d2dWindowRenderTarget.Clear(new SlimDX.Color4(Color.LightSteelBlue));
+            d2dWindowRenderTarget.Clear(new SlimDX.Color4(Color.White));
 
             d2dWindowRenderTarget.DrawRectangle(new SlimDX.Direct2D.SolidColorBrush(d2dWindowRenderTarget, new SlimDX.Color4(Color.Red)), new Rectangle(20, 20, targetControl.Width - 40, targetControl.Height - 40));
             //Draw SlimDX.Direct2D.Bitmap
             d2dWindowRenderTarget.DrawBitmap(d2dBitmap, new Rectangle(0, i, Width, Height));/**/
-            
-            if (i>100)
-            {
-                i = 0;
-            }
             d2dWindowRenderTarget.EndDraw();
             bitmap.Dispose();
-            await Task.Delay(10);
+            //await Task.Delay(10);
             Invalidate();
         }
     }
