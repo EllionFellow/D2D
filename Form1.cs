@@ -7,6 +7,7 @@ namespace D2D
     public partial class Form1 : Form
     {
         int i = 0;
+        int x = 0;
         Control targetControl;
         SlimDX.Direct2D.WindowRenderTarget d2dWindowRenderTarget;
         SlimDX.Direct2D.Factory d2dFactory;
