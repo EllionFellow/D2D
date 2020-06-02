@@ -17,16 +17,15 @@ namespace D2D.Engine
     class d2dengine
     {
         #region //storage
-        private Control targetControl;
-        private WindowRenderTarget d2dWindowRenderTarget;
-        SlimDX.Direct2D.Factory d2dFactory;
-        SlimDX.DirectWrite.Factory wrtFactory;
-        DebugLevel debugLevel;
-        System.Drawing.Imaging.BitmapData bitmapData;
-        DataStream dataStream;
-        PixelFormat d2dPixelFormat;
-        BitmapProperties d2dBitmapProperties;
-        SlimDX.Direct2D.Bitmap d2dBitmap;
+        public Control targetControl;
+        public WindowRenderTarget d2dWindowRenderTarget;
+        public SlimDX.Direct2D.Factory d2dFactory;
+        public SlimDX.DirectWrite.Factory wrtFactory;
+        public DebugLevel debugLevel;
+        public System.Drawing.Imaging.BitmapData bitmapData;
+        public DataStream dataStream;
+        public PixelFormat d2dPixelFormat;
+        public BitmapProperties d2dBitmapProperties;
         public List<gameobject> ToDraw;
         #endregion
 
@@ -34,6 +33,7 @@ namespace D2D.Engine
         #region //ctor
         public d2dengine(Control container, List<gameobject> theList)
         {
+            
             ToDraw = theList;
             targetControl = container;
             debugLevel = DebugLevel.None;
@@ -54,31 +54,27 @@ namespace D2D.Engine
         {
             d2dWindowRenderTarget.BeginDraw();
             d2dWindowRenderTarget.Clear(new Color4(Color.Black));
-            d2dPixelFormat = new PixelFormat(SlimDX.DXGI.Format.B8G8R8A8_UNorm, AlphaMode.Premultiplied);
-            d2dBitmapProperties = new BitmapProperties();
             
             foreach (gameobject curr in ToDraw)
             {
-                if (curr.Game_object_state != 0)
+                if (curr.D2dbm == null)
                 {
-                    bitmapData = curr.Game_object_bitmap.LockBits(new Rectangle(new Point(curr.StateX, curr.StateY), new Size(64, 64)), System.Drawing.Imaging.ImageLockMode.ReadOnly, System.Drawing.Imaging.PixelFormat.Format32bppPArgb);
-                    dataStream = new DataStream(bitmapData.Scan0, bitmapData.Stride * bitmapData.Height, true, false);
+                    d2dPixelFormat = new PixelFormat(SlimDX.DXGI.Format.B8G8R8A8_UNorm, AlphaMode.Premultiplied);
+                    d2dBitmapProperties = new BitmapProperties();
                     d2dBitmapProperties.PixelFormat = d2dPixelFormat;
-                    d2dBitmap = new SlimDX.Direct2D.Bitmap(d2dWindowRenderTarget, new Size(64, 64), dataStream, bitmapData.Stride, d2dBitmapProperties);
+                    
+                    bitmapData = curr.Game_object_bitmap.LockBits(new Rectangle(new Point(0, 0), new Size(curr.Game_object_bitmap.Width, curr.Game_object_bitmap.Height)), System.Drawing.Imaging.ImageLockMode.ReadOnly, System.Drawing.Imaging.PixelFormat.Format32bppPArgb);
+                    dataStream = new DataStream(bitmapData.Scan0, bitmapData.Stride * bitmapData.Height, true, false);
+                    SlimDX.Direct2D.Bitmap temp = new SlimDX.Direct2D.Bitmap(d2dWindowRenderTarget, new Size(curr.Game_object_bitmap.Width, curr.Game_object_bitmap.Height), dataStream, bitmapData.Stride, d2dBitmapProperties);
+                    curr.D2dbm = temp;
                     curr.Game_object_bitmap.UnlockBits(bitmapData);
-                    d2dWindowRenderTarget.DrawBitmap(d2dBitmap, new Rectangle(curr.Game_object_position.X, curr.Game_object_position.Y, 64, 64));
+                    d2dWindowRenderTarget.DrawBitmap(curr.D2dbm);
+                    dataStream.Dispose();
                 }
                 else
                 {
-                    bitmapData = curr.Game_object_bitmap.LockBits(new Rectangle(new Point(0,0), new Size(curr.Game_object_bitmap.Width,curr.Game_object_bitmap.Height)), System.Drawing.Imaging.ImageLockMode.ReadOnly, System.Drawing.Imaging.PixelFormat.Format32bppPArgb);
-                    dataStream = new DataStream(bitmapData.Scan0, bitmapData.Stride * bitmapData.Height, true, false);
-                    d2dBitmapProperties.PixelFormat = d2dPixelFormat;
-                    d2dBitmap = new SlimDX.Direct2D.Bitmap(d2dWindowRenderTarget, new Size(targetControl.Width, targetControl.Height), dataStream, bitmapData.Stride, d2dBitmapProperties);
-                    curr.Game_object_bitmap.UnlockBits(bitmapData);
-                    d2dWindowRenderTarget.DrawBitmap(d2dBitmap, new Rectangle(0, 0, targetControl.Width, targetControl.Height));
+                    d2dWindowRenderTarget.DrawBitmap(curr.D2dbm, new Rectangle(curr.Game_object_position.X, curr.Game_object_position.Y, targetControl.Width, targetControl.Height));
                 }
-                dataStream.Dispose();
-                d2dBitmap.Dispose();
             }
 
 

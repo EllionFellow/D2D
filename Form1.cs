@@ -12,12 +12,12 @@ namespace D2D
     
     {
         public static int counter = 0, tempcounter = 0;
-        Bitmap bgBitmap = Properties.Resources.Image_720p;//loaded from embedded resource, can be changed to Bitmap.FromFile(imageFile); to load from hdd!
+        Bitmap bgBitmap = Properties.Resources._1;
         d2dengine painter;
         List<gameobject> everyone = new List<gameobject>();
         public Form1()
         {
-            everyone.Add(new gameobject(bgBitmap, 0, 0));
+            everyone.Add(new gameobject(bgBitmap, 0, 0, painter,0,0));
             InitializeComponent();
             painter = new d2dengine(this, everyone);
             StartLoop();
@@ -30,12 +30,32 @@ namespace D2D
         {
             while (true)
             {
+                everyone[0].Game_object_position = new Point(counter/100,tempcounter/100);
                 await Task.Run(painter.Render);
             }
         }
 
         protected override void OnPaintBackground(PaintEventArgs e)
         {
+        }
+
+        private void Form1_SizeChanged(object sender, System.EventArgs e)
+        {
+            painter.targetControl.Width = Width;
+            painter.targetControl.Height = Height;
+        }
+
+        private void Form1_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            switch (e.KeyChar)
+            {
+                case 'w':
+                    var raven = new gameobject(Properties.Resources.thecrow, 20, 20, painter,0,1024);
+                    everyone.Add(raven);
+                    break;
+                default:
+                    break;
+            }
         }
 
         private void timer1_Tick(object sender, System.EventArgs e)
