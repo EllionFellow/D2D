@@ -54,9 +54,19 @@ namespace D2D.Engine
         {
             d2dWindowRenderTarget.BeginDraw();
             d2dWindowRenderTarget.Clear(new Color4(Color.Black));
-            
+            int sizex,sizey;
             foreach (gameobject curr in ToDraw)
             {
+                if (curr.Game_object_state == 0)
+                {
+                    sizex = targetControl.Width;
+                    sizey = targetControl.Height;
+                }
+                else
+                {
+                    sizex = 200;
+                    sizey = 200;
+                }
                 if (curr.D2dbm == null)
                 {
                     d2dPixelFormat = new PixelFormat(SlimDX.DXGI.Format.B8G8R8A8_UNorm, AlphaMode.Premultiplied);
@@ -73,14 +83,16 @@ namespace D2D.Engine
                 }
                 else
                 {
-                    d2dWindowRenderTarget.DrawBitmap(curr.D2dbm, new Rectangle(curr.Game_object_position.X, curr.Game_object_position.Y, targetControl.Width, targetControl.Height));
+                    
+                    //d2dWindowRenderTarget.DrawBitmap(curr.D2dbm, new Rectangle(curr.Game_object_position.X, curr.Game_object_position.Y, targetControl.Width, targetControl.Height));
+                    d2dWindowRenderTarget.DrawBitmap(curr.D2dbm, new Rectangle(curr.Game_object_position.X, curr.Game_object_position.Y, sizex, sizey), 1.0f, InterpolationMode.Linear, new Rectangle(1024 * curr.Game_object_state, 0, 1024, curr.Game_object_bitmap.Height));
                 }
             }
 
 
 
             d2dWindowRenderTarget.DrawRectangle(new SolidColorBrush(d2dWindowRenderTarget, new Color4(Color.Red)), new Rectangle(20, 20, targetControl.Width - 40, targetControl.Height - 40));
-            d2dWindowRenderTarget.DrawText(Form1.counter.ToString(),new TextFormat(wrtFactory, "Arial", SlimDX.DirectWrite.FontWeight.Normal, SlimDX.DirectWrite.FontStyle.Normal, FontStretch.Normal, 18, "en-us") , new Rectangle(new Point(0, 0), new Size(200, 20)), new SolidColorBrush(d2dWindowRenderTarget, new Color4(Color.White)));
+            d2dWindowRenderTarget.DrawText(Form1.counter.ToString(),new TextFormat(wrtFactory, "Arial", SlimDX.DirectWrite.FontWeight.Normal, SlimDX.DirectWrite.FontStyle.Normal, FontStretch.Normal, 18, "en-us") , new Rectangle(new Point(0, 0), new Size(200, 20)), new SolidColorBrush(d2dWindowRenderTarget, new Color4(Color.Blue)));
             d2dWindowRenderTarget.EndDraw();
             Form1.tempcounter++;
         }

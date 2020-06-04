@@ -31,7 +31,19 @@ namespace D2D
             while (true)
             {
                 everyone[0].Game_object_position = new Point(counter/100,tempcounter/100);
-                await Task.Run(painter.Render);
+                if (everyone.Count>1)
+                {
+                    if (everyone[1].Game_object_state != 3)
+                    {
+                        everyone[1].Game_object_state++;
+                    }
+                    else
+                    {
+                        everyone[1].Game_object_state = 1;
+                    }
+                }
+                    await Task.Run(painter.Render);
+                
             }
         }
 
@@ -50,7 +62,7 @@ namespace D2D
             switch (e.KeyChar)
             {
                 case 'w':
-                    var raven = new gameobject(Properties.Resources.thecrow, 20, 20, painter,0,1024);
+                    var raven = new gameobject(Properties.Resources.thecrow, 20, 20, painter,1,1024);
                     everyone.Add(raven);
                     break;
                 default:
